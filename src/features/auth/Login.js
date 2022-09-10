@@ -9,7 +9,7 @@ const Login = () => {
   const errorRef = useRef();
 
   const [user, setUser] = useState("");
-  const [password, setPassword] = useState("");
+  const [pwd, setPwd] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
@@ -23,21 +23,21 @@ const Login = () => {
 
   useEffect(() => {
     setErrorMessage("");
-  }, [user, password]);
+  }, [user, pwd]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const userData = await login({ user, password }).unwrap();
-      dispatch(setCredentials({ ...userData, user }));
+      const userData = await login({ user, pwd }).unwrap();
+      dispatch(setCredentials({ token: userData.accessToken, user }));
       setUser("");
-      setPassword("");
+      setPwd("");
       navigate("/welcome");
     } catch (error) {
       if (!error?.originalStatus) {
         setErrorMessage("No Server Response");
       } else if (error.originalStatus === 400) {
-        setErrorMessage("Missing Username or Password");
+        setErrorMessage("Missing Username or pwd");
       } else if (error.originalStatus === 401) {
         setErrorMessage("Unauthorized");
       } else {
@@ -49,7 +49,7 @@ const Login = () => {
 
   const handleUserInput = (e) => setUser(e.target.value);
 
-  const handlePasswordInput = (e) => setPassword(e.target.value);
+  const handlePasswordInput = (e) => setPwd(e.target.value);
 
   const content = isLoading ? (
     <h1>Loading...</h1>
@@ -82,7 +82,7 @@ const Login = () => {
           type="password"
           id="password"
           onChange={handlePasswordInput}
-          value={password}
+          value={pwd}
           required
         />
         <button>Sign In</button>
